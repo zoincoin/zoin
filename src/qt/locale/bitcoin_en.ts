@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="en">
-<defaultcodec>UTF-8</defaultcodec>
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE TS><TS version="2.0" language="en">
+
 <context>
     <name>AboutDialog</name>
     <message>
@@ -590,8 +588,8 @@ This product includes software developed by the OpenSSL Project for use in the O
     </message>
     <message>
         <location line="+4"/>
-        <source>%1 behind</source>
-        <translation>%1 behind</translation>
+        <source>%1 behind (%2 of %3)</source>
+        <translation>%1 behind (%2 of %3)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2266,8 +2264,8 @@ Address: %4
     </message>
     <message>
         <location line="-28"/>
-        <source>Listen for connections on &lt;port&gt; (default: 9333 or testnet: 19333)</source>
-        <translation>Listen for connections on &lt;port&gt; (default: 9333 or testnet: 19333)</translation>
+        <source>Listen for connections on &lt;port&gt; (default: 8255 or testnet: 18255)</source>
+        <translation>Listen for connections on &lt;port&gt; (default: 8255 or testnet: 18255)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2301,8 +2299,8 @@ Address: %4
     </message>
     <message>
         <location line="+27"/>
-        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 9332 or testnet: 19332)</source>
-        <translation>Listen for JSON-RPC connections on &lt;port&gt; (default: 9332 or testnet: 19332)</translation>
+        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 8822 or testnet: 18822)</source>
+        <translation>Listen for JSON-RPC connections on &lt;port&gt; (default: 8822 or testnet: 18822)</translation>
     </message>
     <message>
         <location line="+37"/>

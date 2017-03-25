@@ -1,10 +1,10 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ru" version="2.0">
-<defaultcodec>UTF-8</defaultcodec>
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.0" language="ru">
+
 <context>
     <name>AboutDialog</name>
     <message>
         <location filename="../forms/aboutdialog.ui" line="+14"/>
-        <source>About zoin</source>
+        <source>Про Zoin</source>
         <translation>&amp;О zoin</translation>
     </message>
     <message>
@@ -576,8 +576,8 @@ This product includes software developed by the OpenSSL Project for use in the O
     </message>
     <message>
         <location line="+4"/>
-        <source>%1 behind</source>
-        <translation>%1 позади</translation>
+        <source>%1 behind (%2 of %3)</source>
+        <translation>%1 позади (%2 из %3)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2238,8 +2238,8 @@ Address: %4
     </message>
     <message>
         <location line="-28"/>
-        <source>Listen for connections on &lt;port&gt; (default: 9333 or testnet: 19333)</source>
-        <translation>Принимать входящие подключения на &lt;port&gt; (по умолчанию: 9333 или 19333 в тестовой сети)</translation>
+        <source>Listen for connections on &lt;port&gt; (default: 8255 or testnet: 18255)</source>
+        <translation>Принимать входящие подключения на &lt;port&gt; (по умолчанию: 8255 или 18255 в тестовой сети)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2273,8 +2273,8 @@ Address: %4
     </message>
     <message>
         <location line="+27"/>
-        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 9332 or testnet: 19332)</source>
-        <translation>Прослушивать подключения JSON-RPC на &lt;порту&gt; (по умолчанию: 9332 или для testnet: 19332)</translation>
+        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 8822 or testnet: 18822)</source>
+        <translation>Прослушивать подключения JSON-RPC на &lt;порту&gt; (по умолчанию: 8822 или для testnet: 18822)</translation>
     </message>
     <message>
         <location line="+37"/>

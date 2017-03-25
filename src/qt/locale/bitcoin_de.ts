@@ -1,5 +1,5 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.0">
-<defaultcodec>UTF-8</defaultcodec>
+
 <context>
     <name>AboutDialog</name>
     <message>
@@ -576,8 +576,8 @@ Dieses Produkt enthält Software, die vom OpenSSL-Projekt zur Verwendung im Open
     </message>
     <message>
         <location line="+4"/>
-        <source>%1 behind</source>
-        <translation>%1 im Rückstand</translation>
+        <source>%1 behind (%2 of %3)</source>
+        <translation>%1 hinter (%2 von %3)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2236,8 +2236,8 @@ Adresse: %4</translation>
     </message>
     <message>
         <location line="-28"/>
-        <source>Listen for connections on &lt;port&gt; (default: 9333 or testnet: 19333)</source>
-        <translation>&lt;port&gt; nach Verbindungen abhören (Standard: 9333 oder Testnetz: 19333)</translation>
+        <source>Listen for connections on &lt;port&gt; (default: 8255 or testnet: 18255)</source>
+        <translation>&lt;port&gt; nach Verbindungen abhören (Standard: 8255 oder Testnetz: 18255)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2271,8 +2271,8 @@ Adresse: %4</translation>
     </message>
     <message>
         <location line="+27"/>
-        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 9332 or testnet: 19332)</source>
-        <translation>&lt;port&gt; nach JSON-RPC-Verbindungen abhören (Standard: 9332 oder Testnetz: 19332)</translation>
+        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 8822 or testnet: 18822)</source>
+        <translation>&lt;port&gt; nach JSON-RPC-Verbindungen abhören (Standard: 8822 oder Testnetz: 18822)</translation>
     </message>
     <message>
         <location line="+37"/>
