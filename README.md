@@ -13,7 +13,7 @@ Zoin is the implementation of the Zerocoin protocol ( http://zerocoin.org ) guar
  - Tail subsidy of 10 coins per block after 2 years (~10% per year)
 
 For more information, as well as an immediately useable, binary version of
-the zoin client sofware, see https://github.com/zoin/zoin/releases.
+the zoin client sofware, see https://github.com/zoincoin/zoin/releases.
 
 License
 -------
