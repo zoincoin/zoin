@@ -78,6 +78,8 @@ Value getinfo(const Array& params, bool fHelp)
     if (pwalletMain) {
         obj.push_back(Pair("walletversion", pwalletMain->GetVersion()));
         obj.push_back(Pair("balance",       ValueFromAmount(pwalletMain->GetBalance())));
+		obj.push_back(Pair("unconfirmedbalance", ValueFromAmount(pwalletMain->GetUnconfirmedBalance())));
+		obj.push_back(Pair("immaturebalance", ValueFromAmount(pwalletMain->GetImmatureBalance())));
     }
     obj.push_back(Pair("blocks",        (int)nBestHeight));
     obj.push_back(Pair("timeoffset",    (boost::int64_t)GetTimeOffset()));
@@ -96,8 +98,6 @@ Value getinfo(const Array& params, bool fHelp)
     obj.push_back(Pair("errors",        GetWarnings("statusbar")));
     return obj;
 }
-
-
 
 Value getnewaddress(const Array& params, bool fHelp)
 {
@@ -1626,7 +1626,7 @@ Value listlockunspent(const Array& params, bool fHelp)
 Value mintzerocoin(const Array& params, bool fHelp)
 {
 
-    if (fHelp || (params.size() > 1) || (params.size() < 1))
+    if (fHelp || (params.size() != 1) )
         throw runtime_error(
             "mintzerocoin <amount>(1,10,25,50,100)\n"
             + HelpRequiringPassphrase());
@@ -1715,7 +1715,7 @@ Value mintzerocoin(const Array& params, bool fHelp)
 Value spendzerocoin(const Array& params, bool fHelp)
 {
 
-    if (fHelp || (params.size() > 1) || (params.size() < 1))
+    if (fHelp || (params.size() != 1))
         throw runtime_error(
             "spendzerocoin <amount>(1,10,25,50,100)\n"
             + HelpRequiringPassphrase());

@@ -135,7 +135,7 @@ CAddress GetLocalAddress(const CNetAddr *paddrPeer)
 bool RecvLine(SOCKET hSocket, string& strLine)
 {
     strLine = "";
-    loop
+    while(true)
     {
         char c;
         int nBytes = recv(hSocket, &c, 1, 0);
@@ -307,7 +307,7 @@ bool GetMyExternalIP2(const CService& addrConnect, const char* pszGet, const cha
     {
         if (strLine.empty()) // HTTP response is separated from headers by blank line
         {
-            loop
+            while(true)
             {
                 if (!RecvLine(hSocket, strLine))
                 {
@@ -751,7 +751,7 @@ static list<CNode*> vNodesDisconnected;
 void ThreadSocketHandler()
 {
     unsigned int nPrevNodeCount = 0;
-    loop
+    while(true)
     {
         //
         // Disconnect nodes
@@ -1115,7 +1115,7 @@ void ThreadMapPort()
         string strDesc = "zoin " + FormatFullVersion();
 
         try {
-            loop {
+            while(true) {
 #ifndef UPNPDISCOVER_SUCCESS
                 /* miniupnpc 1.5 */
                 r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
@@ -1192,20 +1192,21 @@ void MapPort(bool)
 // The first name is used as information source for addrman.
 // The second name should resolve to a list of seed addresses.
 static const char *strMainNetDNSSeed[][2] = {
-    {"zoin1.ignorelist.com", "zoin1.ignorelist.com"},
-    {"zoin2.ignorelist.com", "zoin2.ignorelist.com"},
-    {"zoin1.strangled.net", "zoin1.strangled.net"},
-    {"zoin2.strangled.net", "zoin2.strangled.net"},
-    {"seed1.zoin.space", "seed1.zoin.space"},
-    {"seed2.zoin.space", "seed2.zoin.space"},
-    {"seed3.zoin.space", "seed3.zoin.space"},
-    {"seed4.zoin.space", "seed4.zoin.space"},
-    {"seed5.zoin.space", "seed5.zoin.space"},
-    {"seed6.zoin.space", "seed6.zoin.space"},
-    {"seed1.zoin.tech", "seed1.zoin.tech"},
-    {"seed2.zoin.tech", "seed2.zoin.tech"},
+	{"seed.zoin.ml", "seed.zoin.ml"},
+	{"zoin.mooo.com", "zoin.mooo.com"},
+	{"seed1.zoin.ml", "seed1.zoin.ml"},
+	{"zoin.crabdance.com", "zoin.crabdance.com"}, 
+	{"seed2.zoin.ml", "seed2.zoin.ml"},
+	{"zoin.ignorelist.com", "zoin.ignorelist.com"}, 
+	{"seed3.zoin.ml", "seed3.zoin.ml"},
+	{"zoin.jumpingcrab.com", "zoin.jumpingcrab.com"},
+	{"seed4.zoin.ml", "seed4.zoin.ml"},
+	{"zoin.chickenkiller.com", "zoin.chickenkiller.com"},	
+	{"seed5.zoin.ml", "seed5.zoin.ml"},
+	{"seed6.zoin.ml", "seed6.zoin.ml"},
     {NULL, NULL}
 };
+
 
 static const char *strTestNetDNSSeed[][2] = {
     {"zointest.mooo.com", "zointest.mooo.com"},
@@ -1312,7 +1313,7 @@ void ThreadOpenConnections()
 
     // Initiate network connections
     int64 nStart = GetTime();
-    loop
+    while(true)
     {
         ProcessOneShot();
 
@@ -1363,7 +1364,7 @@ void ThreadOpenConnections()
         int64 nANow = GetAdjustedTime();
 
         int nTries = 0;
-        loop
+        while(true)
         {
             // use an nUnkBias between 10 (no outgoing connections) and 90 (8 outgoing connections)
             CAddress addr = addrman.Select(10 + min(nOutbound,8)*10);

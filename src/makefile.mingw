@@ -20,16 +20,23 @@ CXX ?= g++
 USE_UPNP:=1
 USE_IPV6:=1
 
-DEPSDIR?=/usr/local
-BOOST_SUFFIX?=-mgw46-mt-sd-1_52
+DEPSDIR?=/C/deps
+BOOST_SUFFIX?=-mgw49-mt-s-1_59
 
 INCLUDEPATHS= \
  -I"$(CURDIR)" \
- -I"$(DEPSDIR)/include"
+ -I"/c/deps" \
+ -I"/c/deps/boost_1_59_0" \
+ -I"/c/deps/db-4.8.30.NC/build_unix" \
+ -I"/c/deps/openssl-1.0.2k/include" \
+ -I"/c/deps/zoin-master/src"
 
 LIBPATHS= \
+ -L"$(CURDIR)" \
  -L"$(CURDIR)/leveldb" \
- -L"$(DEPSDIR)/lib"
+ -L"/c/deps/boost_1_59_0/stage/lib" \
+ -L"/c/deps/db-4.8.30.NC/build_unix" \
+ -L"/c/deps/openssl-1.0.2k"
 
 LIBS= \
  -l leveldb \
@@ -47,7 +54,7 @@ DEFS=-D_MT -DWIN32 -D_WINDOWS -DBOOST_THREAD_USE_LIB -DBOOST_SPIRIT_THREADSAFE
 DEBUGFLAGS=-g
 CFLAGS=-mthreads -O2 -w -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
 # enable: ASLR, DEP and large address aware
-LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat -Wl,--large-address-aware
+LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat -Wl,--large-address-aware -static
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 
@@ -55,8 +62,10 @@ ifndef USE_UPNP
 	override USE_UPNP = -
 endif
 ifneq (${USE_UPNP}, -)
+ INCLUDEPATHS += -I"/c/deps"
+ LIBPATHS += -L"/c/deps/miniupnpc"
  LIBS += -l miniupnpc -l iphlpapi
- DEFS += -DSTATICLIB -DUSE_UPNP=$(USE_UPNP)
+ DEFS += -DSTATICLIB -DMINIUPNP_STATICLIB -DUSE_UPNP=$(USE_UPNP)
 endif
 
 ifneq (${USE_IPV6}, -)
@@ -97,11 +106,23 @@ OBJS= \
     obj/util.o \
     obj/wallet.o \
     obj/walletdb.o \
+    obj/noui.o \
     obj/hash.o \
     obj/bloom.o \
-    obj/noui.o \
     obj/leveldb.o \
-    obj/txdb.o
+    obj/txdb.o \
+	obj/libzerocoin/Accumulator.o \
+    obj/libzerocoin/AccumulatorProofOfKnowledge.o \
+    obj/libzerocoin/Coin.o \
+    obj/libzerocoin/CoinSpend.o \
+    obj/libzerocoin/Commitment.o \
+    obj/libzerocoin/ParamGeneration.o \
+    obj/libzerocoin/Params.o \
+    obj/libzerocoin/SerialNumberSignatureOfKnowledge.o \
+    obj/libzerocoin/SpendMetaData.o \
+	obj/Lyra2.o \
+    obj/Sponge.o
+
 
 ifdef USE_SSE2
 DEFS += -DUSE_SSE2
@@ -126,6 +147,9 @@ leveldb/libleveldb.a:
 obj/%-sse2.o: %-sse2.cpp
 	$(CXX) -c $(CFLAGS) -msse2 -mstackrealign -o $@ $<
 
+obj/%.o: %.c
+	gcc -c -O3 -o $@ $<
+
 obj/%.o: %.cpp $(HEADERS)
 	$(CXX) -c $(CFLAGS) -o $@ $<
 
@@ -142,8 +166,14 @@ test_zoin.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
 
 clean:
 	rm -f zoind.exe test_zoin.exe
-	rm -f obj/*
+	rm -f *.o
+	rm -f obj/*.o
+	rm -f obj/libzerocoin/*.o
 	rm -f obj-test/*
 	cd leveldb && $(MAKE) TARGET_OS=NATIVE_WINDOWS clean && cd ..
+	rm -f leveldb/*.o
+	rm -f leveldb/db/*.o
+	rm -f leveldb/table/*.o
+	rm -f leveldb/util/*.o
 
 FORCE:

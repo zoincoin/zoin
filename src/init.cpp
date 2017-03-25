@@ -3,6 +3,7 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "db.h"
 #include "txdb.h"
 #include "walletdb.h"
 #include "bitcoinrpc.h"
@@ -319,7 +320,7 @@ std::string HelpMessage()
         "  -socks=<n>             " + _("Select the version of socks proxy to use (4-5, default: 5)") + "\n" +
         "  -tor=<ip:port>         " + _("Use proxy to reach tor hidden services (default: same as -proxy)") + "\n"
         "  -dns                   " + _("Allow DNS lookups for -addnode, -seednode and -connect") + "\n" +
-        "  -port=<port>           " + _("Listen for connections on <port> (default: 8889 or testnet: 18889)") + "\n" +
+        "  -port=<port>           " + _("Listen for connections on <port> (default: 8255 or testnet: 18255)") + "\n" +
         "  -maxconnections=<n>    " + _("Maintain at most <n> connections to peers (default: 125)") + "\n" +
         "  -addnode=<ip>          " + _("Add a node to connect to and attempt to keep the connection open") + "\n" +
         "  -connect=<ip>          " + _("Connect only to the specified node(s)") + "\n" +
@@ -363,7 +364,7 @@ std::string HelpMessage()
 #endif
         "  -rpcuser=<user>        " + _("Username for JSON-RPC connections") + "\n" +
         "  -rpcpassword=<pw>      " + _("Password for JSON-RPC connections") + "\n" +
-        "  -rpcport=<port>        " + _("Listen for JSON-RPC connections on <port> (default: 6888 or testnet: 16888)") + "\n" +
+        "  -rpcport=<port>        " + _("Listen for JSON-RPC connections on <port> (default: 8822 or testnet: 18822)") + "\n" +
         "  -rpcallowip=<ip>       " + _("Allow JSON-RPC connections from specified IP address") + "\n" +
 #ifndef QT_GUI
         "  -rpcconnect=<ip>       " + _("Send commands to node running on <ip> (default: 127.0.0.1)") + "\n" +
@@ -377,7 +378,7 @@ std::string HelpMessage()
         "  -keypool=<n>           " + _("Set key pool size to <n> (default: 100)") + "\n" +
         "  -rescan                " + _("Rescan the block chain for missing wallet transactions") + "\n" +
         "  -salvagewallet         " + _("Attempt to recover private keys from a corrupt wallet.dat") + "\n" +
-        "  -checkblocks=<n>       " + _("How many blocks to check at startup (default: 288, 0 = all)") + "\n" +
+        "  -checkblocks=<n>       " + _("How many blocks to check at startup (default: 8, 0 = all)") + "\n" +
         "  -checklevel=<n>        " + _("How thorough the block verification is (0-4, default: 3)") + "\n" +
         "  -txindex               " + _("Maintain a full transaction index (default: 0)") + "\n" +
         "  -loadblock=<file>      " + _("Imports blocks from external blk000??.dat file") + "\n" +
@@ -949,7 +950,7 @@ bool AppInit2(boost::thread_group& threadGroup)
                 uiInterface.InitMessage(_("Verifying blocks..."));
 
                 if (!VerifyDB(GetArg("-checklevel", 3),
-                                  GetArg( "-checkblocks", 8))) {
+                                  GetArg( "-checkblocks", 80))) {
                         strLoadError = _("Corrupted block database detected");
                         break;
                 }
@@ -1029,17 +1030,22 @@ bool AppInit2(boost::thread_group& threadGroup)
         nStart = GetTimeMillis();
         bool fFirstRun = true;
         pwalletMain = new CWallet("wallet.dat");
-
+		
         if (filesystem::exists(GetDataDir() / "wallet.dat"))
         {
             // Zerocoin reorg, calculate new height and id
             list<CZerocoinEntry> listPubCoin = list<CZerocoinEntry>();
             CWalletDB walletdb(pwalletMain->strWalletFile);
+			int lastCalculatedZCBlock = 0;
+            walletdb.ReadCalculatedZCBlock(lastCalculatedZCBlock);
             walletdb.ListPubCoin(listPubCoin);
 
             // RECURSIVE, SET NEW ID
             BOOST_FOREACH(const CZerocoinEntry& pubCoinItem, listPubCoin) {
-
+				
+               if(!fReindex && pubCoinItem.nHeight < lastCalculatedZCBlock){
+                continue;
+               } else {
                 CZerocoinEntry pubCoinTx;
                 pubCoinTx.value = pubCoinItem.value;
                 pubCoinTx.id = -1;
@@ -1050,6 +1056,8 @@ bool AppInit2(boost::thread_group& threadGroup)
                 pubCoinTx.IsUsed = pubCoinItem.IsUsed;
                 //printf("- Reindex Pubcoin Id: %d Denomination: %d\n", pubCoinTx.id, pubCoinTx.denomination);
                 walletdb.WriteZerocoinEntry(pubCoinTx);
+			   }
+
 
             }
 
@@ -1057,6 +1065,11 @@ bool AppInit2(boost::thread_group& threadGroup)
             {
                 while (pindexRecur)
                 {
+                  if(!fReindex && (pindexRecur->nHeight < lastCalculatedZCBlock)){
+                        pindexRecur = pindexRecur->pnext;
+                        continue;
+                  }else{
+			        printf("PROCESS BLOCK = %d\n", pindexRecur->nHeight);
                     CBlock blockRecur;
                     blockRecur.ReadFromDisk(pindexRecur);
 
@@ -1073,7 +1086,7 @@ bool AppInit2(boost::thread_group& threadGroup)
 
                                     CBigNum pubCoin;
                                     pubCoin.setvch(vchZeroMint);
-                                    //printf("FOUND MINT ZEROCOIN AT HEIGHT = %d\n", pindexRecur->nHeight);
+                                    printf("FOUND MINT ZEROCOIN AT HEIGHT = %d\n", pindexRecur->nHeight);
 
                                     BOOST_FOREACH(const CZerocoinEntry& pubCoinItem, listPubCoinInLoop) {
                                         if (pubCoinItem.value == pubCoin) {
@@ -1081,7 +1094,7 @@ bool AppInit2(boost::thread_group& threadGroup)
                                             CZerocoinEntry pubCoinTx;
 
                                             // PUBCOIN IS IN DB, BUT NOT UPDATE ID
-                                            //printf("UPDATING\n");
+                                            printf("UPDATING\n");
                                             // GET MAX ID
                                             int currentId = 1;
                                             BOOST_FOREACH(const CZerocoinEntry& maxIdPubcoin, listPubCoinInLoop) {
@@ -1089,13 +1102,13 @@ bool AppInit2(boost::thread_group& threadGroup)
                                                     currentId = maxIdPubcoin.id;
                                                 }
                                             }
-
+				  
                                             // FIND HOW MANY OF MAX ID
                                             unsigned int countExistingItems = 0;
                                             BOOST_FOREACH(const CZerocoinEntry& countItemPubcoin, listPubCoinInLoop) {
                                                 if (currentId == countItemPubcoin.id && countItemPubcoin.denomination == pubCoinItem.denomination) {
                                                     countExistingItems++;
-                                                    //printf("pubCoinItem.id = %d denomination =  %d\n", countItemPubcoin.id, countItemPubcoin.denomination);
+                                                    printf("pubCoinItem.id = %d denomination =  %d\n", countItemPubcoin.id, countItemPubcoin.denomination);
                                                 }
                                             }
 
@@ -1114,17 +1127,19 @@ bool AppInit2(boost::thread_group& threadGroup)
                                             pubCoinTx.serialNumber = pubCoinItem.serialNumber;
                                             pubCoinTx.value = pubCoinItem.value;
                                             pubCoinTx.nHeight = pindexRecur->nHeight;
-                                            //printf("REORG PUBCOIN ID: %d HEIGHT: %d DENOMINATION: %d\n", pubCoinTx.id, pubCoinTx.nHeight,pubCoinItem.denomination);
+                                            printf("REORG PUBCOIN ID: %d HEIGHT: %d DENOMINATION: %d\n", pubCoinTx.id, pubCoinTx.nHeight,pubCoinItem.denomination);
                                             walletdbInLoop.WriteZerocoinEntry(pubCoinTx);
                                         }
                                     }
 
                                 }
                             }
-                        }
+                    }
 
-                    //printf("PROCESS BLOCK = %d\n", pindexRecur->nHeight);
-                    pindexRecur = pindexRecur->pnext;
+					printf("PROCESS BLOCK = %d\n", pindexRecur->nHeight);
+					walletdb.WriteCalculatedZCBlock(pindexRecur->nHeight);
+					pindexRecur = pindexRecur->pnext;
+                  }
                 }
             }
 

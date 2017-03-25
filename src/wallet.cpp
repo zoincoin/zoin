@@ -1268,7 +1268,7 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, int64> >& vecSend,
         LOCK2(cs_main, cs_wallet);
         {
             nFeeRet = nTransactionFee;
-            loop
+            while(true)
             {
                 wtxNew.vin.clear();
                 wtxNew.vout.clear();
@@ -1421,22 +1421,16 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, int64> >& vecSend,
    return true;
 }
 
-libzerocoin::CoinDenomination ZerocoinAmtToDenom(int amt)
-{
-    if (amt == 1)
-        return libzerocoin::ZQ_LOVELACE;
-    if (amt == 10)
-        return libzerocoin::ZQ_GOLDWASSER;
-    if (amt == 25)
-        return libzerocoin::ZQ_RACKOFF;
-    if (amt == 50)
-        return libzerocoin::ZQ_PEDERSEN;
-    if (amt == 100)
-        return libzerocoin::ZQ_WILLIAMSON;
+libzerocoin::CoinDenomination ZerocoinAmtToDenom(int amount) {
+    if (amount == 1) return libzerocoin::ZQ_LOVELACE;
+    if (amount == 10) return libzerocoin::ZQ_GOLDWASSER;
+    if (amount == 25) return libzerocoin::ZQ_RACKOFF;
+    if (amount == 50) return libzerocoin::ZQ_PEDERSEN;
+    if (amount == 100) return libzerocoin::ZQ_WILLIAMSON;
     return libzerocoin::ZQ_LOVELACE;
 }
 
-bool CWallet::CreateZerocoinMintModel(int amt, string &stringError){
+bool CWallet::CreateZerocoinMintModel(int amount, string &stringError){
 
     if(!fFileBacked)
         return false;
@@ -1454,12 +1448,11 @@ bool CWallet::CreateZerocoinMintModel(int amt, string &stringError){
     // new zerocoin. It stores all the private values inside the
     // PrivateCoin object. This includes the coin secrets, which must be
     // stored in a secure location (wallet) at the client.
-
-    // fix denomination for UI
-    libzerocoin::CoinDenomination denomination = ZerocoinAmtToDenom(amt);
-
-    libzerocoin::PrivateCoin newCoin(ZCParams, denomination);
-
+    
+	// fix denomination for UI
+    libzerocoin::CoinDenomination denomination = ZerocoinAmtToDenom(amount);
+	
+	libzerocoin::PrivateCoin newCoin(ZCParams, denomination);
 
     // Get a copy of the 'public' portion of the coin. You should
     // embed this into a Zerocoin 'MINT' transaction along with a series
@@ -1471,9 +1464,9 @@ bool CWallet::CreateZerocoinMintModel(int amt, string &stringError){
     {
         CScript scriptSerializedCoin = CScript() << OP_ZEROCOINMINT << pubCoin.getValue().getvch().size() << pubCoin.getValue();
 
-        // Amount fixed value
-        int64 nAmount = roundint64(amt * COIN);
-
+		// Amount fixed value
+        int64 nAmount = roundint64(amount * COIN);
+		
          // Wallet comments
         CWalletTx wtx;
 
@@ -1485,7 +1478,7 @@ bool CWallet::CreateZerocoinMintModel(int amt, string &stringError){
 
         CZerocoinEntry zerocoinTx;
         zerocoinTx.IsUsed = false;
-        zerocoinTx.denomination = amt;
+        zerocoinTx.denomination = amount;
         zerocoinTx.value = pubCoin.getValue();
         zerocoinTx.randomness = newCoin.getRandomness();
         zerocoinTx.serialNumber = newCoin.getSerialNumber();
@@ -1494,24 +1487,23 @@ bool CWallet::CreateZerocoinMintModel(int amt, string &stringError){
         if(!CWalletDB(strWalletFile).WriteZerocoinEntry(zerocoinTx))
             return false;
         return true;
-    }
-    else
-    {
+    }else{
         return false;
     }
+
+
 }
 
-bool CWallet::CreateZerocoinSpendModel(int amt, string &stringError)
-{
+bool CWallet::CreateZerocoinSpendModel(int amount, string &stringError) {
     if(!fFileBacked)
         return false;
 
-    // Amount fixed value
-    int64 nAmount = roundint64(amt * COIN);
+	// Amount fixed value
+    int64 nAmount = roundint64(amount * COIN);
 
     // fix denomination for UI
-    libzerocoin::CoinDenomination denomination = ZerocoinAmtToDenom(amt);
-
+    libzerocoin::CoinDenomination denomination = ZerocoinAmtToDenom(amount);
+	
     // Wallet comments
     CWalletTx wtx;
 
@@ -1554,7 +1546,7 @@ bool CWallet::CreateZerocoinMintTransaction(const vector<pair<CScript, int64> >&
        LOCK2(cs_main, cs_wallet);
        {
            nFeeRet = nTransactionFee;
-           loop
+           while(true)
            {
                wtxNew.vin.clear();
                wtxNew.vout.clear();
@@ -1745,8 +1737,7 @@ bool CWallet::CreateZerocoinSpendTransaction(int64 nValue, libzerocoin::CoinDeno
             // zerocoin init
             static CBigNum bnTrustedModulus;
 
-            // bool setParams = 
-			bnTrustedModulus.SetHexBool(ZEROCOIN_MODULUS);
+            bnTrustedModulus.SetHexBool(ZEROCOIN_MODULUS);
 
             // Set up the Zerocoin Params object
             static libzerocoin::Params *ZCParams = new libzerocoin::Params(bnTrustedModulus);
