@@ -10,7 +10,7 @@
 
 // Copyright year (2009-this)
 // Todo: update this when changing our copyright comments in the source
-const int ABOUTDIALOG_COPYRIGHT_YEAR = 2016;
+const int ABOUTDIALOG_COPYRIGHT_YEAR = 2017;
 
 AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent),
@@ -20,14 +20,11 @@ AboutDialog::AboutDialog(QWidget *parent) :
 
     // Set current copyright year
     ui->copyrightLabel->setText(
-               tr("Copyright") + QString(" &copy; ") +
-               tr("2016 The Zoin developers") + QString("<br>") +
-               tr("Copyright") + QString(" &copy; ") +
-               tr("2016 The ZCoin developers") + QString("<br>") +
-			   tr("Copyright") + QString(" &copy; ") + 
-               tr("2011-2014 The Zerocoin developers") + QString("<br>") +
-               tr("Copyright") + QString(" &copy; ") +
-               tr("2009-2014 The Bitcoin developers") 
+			   tr("Copyright") + QString(" &copy; ") + tr("2017 The ZoinCoin team (<a href=\"http://zoin.ml\">http://zoin.ml</a>)") + QString("<br>") +
+               tr("Copyright") + QString(" &copy; ") + tr("2016 The Zoin developers") + QString("<br>") +
+               tr("Copyright") + QString(" &copy; ") + tr("2016 The ZCoin developers") + QString("<br>") +
+			   tr("Copyright") + QString(" &copy; ") + tr("2011-2014 The Zerocoin developers") + QString("<br>") +
+               tr("Copyright") + QString(" &copy; ") + tr("2009-2014 The Bitcoin developers") 
 			   );
 }
 

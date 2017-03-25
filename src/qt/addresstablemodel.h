@@ -77,7 +77,7 @@ public:
 
     EditStatus getEditStatus() const { return editStatus; }
 
-    int InputZeroCoinAmount(QWidget* parent);
+	int InputZeroCoinAmount(QWidget* parent);
 
     bool zerocoinMint(QWidget* parent, std::string &stringError);
     bool zerocoinSpend(QWidget* parent, std::string &stringError);

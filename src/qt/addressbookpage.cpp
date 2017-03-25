@@ -221,9 +221,9 @@ void AddressBookPage::onEditAction()
     dlg.exec();
 }
 
+
 void AddressBookPage::on_zerocoinMintButton_clicked()
 {
-
     std::string stringError;
     if(!model->zerocoinMint(this, stringError))
     {
@@ -236,16 +236,17 @@ void AddressBookPage::on_zerocoinMintButton_clicked()
                 QMessageBox::Ok, QMessageBox::Ok);
         }
     }
-
 }
 
-void AddressBookPage::on_zerocoinSpendButton_clicked(){
+
+void AddressBookPage::on_zerocoinSpendButton_clicked()
+{
 
     std::string stringError;
     if(!model->zerocoinSpend(this, stringError))
-    {
+	{
         if (stringError != "")
-        {
+		{
             QString t = tr(stringError.c_str());
 
             QMessageBox::critical(this, tr("Error"),
