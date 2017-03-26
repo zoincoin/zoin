@@ -840,20 +840,20 @@ bool CTransaction::CheckTransaction(CValidationState &state, uint256 hashTx, boo
 
                     listPubCoin.sort(CompHeight);
 
-					libzerocoin::CoinDenomination denomination;
+		    libzerocoin::CoinDenomination denomination;
 
-					for (unsigned int i = 0; i < 6; i++) {
-					  if (i == 0) denomination = libzerocoin::ZQ_LOVELACE;
-					  else if (i == 1) denomination = libzerocoin::ZQ_GOLDWASSER;
-					  else if (i == 2) denomination = libzerocoin::ZQ_RACKOFF;
-					  else if (i == 3) denomination = libzerocoin::ZQ_PEDERSEN;
-					  else if (i == 4) denomination = libzerocoin::ZQ_WILLIAMSON;
-					  else if (i == 5) return state.DoS(100, error("CTransaction::CheckTransaction() : Your spending txout value does not match"));					
+		    for (unsigned int i = 0; i < 6; i++) {
+		    	if (i == 0) denomination = libzerocoin::ZQ_LOVELACE;
+			else if (i == 1) denomination = libzerocoin::ZQ_GOLDWASSER;
+			else if (i == 2) denomination = libzerocoin::ZQ_RACKOFF;
+			else if (i == 3) denomination = libzerocoin::ZQ_PEDERSEN;
+			else if (i == 4) denomination = libzerocoin::ZQ_WILLIAMSON;
+			else if (i == 5) return state.DoS(100, error("CTransaction::CheckTransaction() : Your spending txout value does not match"));
 
-					  if (txout.nValue == denomination * COIN) {
-						// Check vIn
-						BOOST_FOREACH(const CTxIn& txin, vin) {
-							if (txin.scriptSig.IsZerocoinSpend()) {
+			if (txout.nValue == denomination * COIN) {
+			  // Check vIn
+			  BOOST_FOREACH(const CTxIn& txin, vin) {
+			    if (txin.scriptSig.IsZerocoinSpend()) {
                                 // Deserialize the CoinSpend intro a fresh object
 
                                 std::vector<char, zero_after_free_allocator<char> > dataTxIn;
@@ -1018,13 +1018,13 @@ bool CTransaction::CheckTransaction(CValidationState &state, uint256 hashTx, boo
                                 }
                             }
                         }
-						
-						i = 10;
-						
+
+			i = 10;
+
                       }
-					  
-					} //for
-									
+
+		   } //for
+
                 }
 
             }
