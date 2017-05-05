@@ -12,9 +12,16 @@ CONFIG += no_include_pwd
 CONFIG += thread
 CONFIG += static
 
-USE_QRCODE=1
-USE_UPNP=1
-USE_IPV6=1
+## New Defaults: Use QRCodes; build and enable UPNP and IPV6
+isEmpty( USE_QRCODE ) {
+  USE_QRCODE = 1
+}
+isEmpty( USE_UPNP ) {
+  USE_UPNP = 1
+}
+isEmpty( USE_IPV6 ) {
+  USE_IPV6=1
+}
 
 # for boost 1.37, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
@@ -38,8 +45,8 @@ win32 {
 	OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2k
 	MINIUPNPC_INCLUDE_PATH=C:/deps
 	MINIUPNPC_LIB_PATH=C:/deps/miniupnpc
-	QRENCODE_INCLUDE_PATH=C:\deps\qrencode-3.4.4
-	QRENCODE_LIB_PATH=C:\deps\qrencode-3.4.4\.libs
+	QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4
+	QRENCODE_LIB_PATH=C:/deps/qrencode-3.4.4/.libs
 }
 
 
@@ -104,7 +111,7 @@ contains(USE_UPNP, -) {
 
 # use: qmake "USE_DBUS=1"
 contains(USE_DBUS, 1) {
-    message(Building with DBUS (Freedesktop notifications) support)
+    message(Building with DBUS \(Freedesktop notifications\) support)
     DEFINES += USE_DBUS
     QT += dbus
 }
@@ -115,6 +122,7 @@ contains(USE_DBUS, 1) {
 contains(USE_IPV6, -) {
     message(Building without IPv6 support)
 } else {
+    message(Building with IPv6 support)
     count(USE_IPV6, 0) {
         USE_IPV6=1
     }
@@ -130,14 +138,14 @@ INCLUDEPATH += src/leveldb/include src/leveldb/helpers
 LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
 !win32 {
     # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
-    genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT="$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE" libleveldb.a libmemenv.a
+    genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a
 } else {
     # make an educated guess about what the ranlib command is called
     isEmpty(QMAKE_RANLIB) {
         QMAKE_RANLIB = $$replace(QMAKE_STRIP, strip, ranlib)
     }
     LIBS += -lshlwapi 
-    ###genleveldb.commands = cd \"$$PWD\"/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB \"$$PWD\"/src/leveldb/libleveldb.a && $$QMAKE_RANLIB \"$$PWD\"/src/leveldb/libmemenv.a
+    ###genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libleveldb.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libmemenv.a
 }
 genleveldb.target = $$PWD/src/leveldb/libleveldb.a
 genleveldb.depends = FORCE
