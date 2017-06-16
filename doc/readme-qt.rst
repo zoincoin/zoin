@@ -86,7 +86,7 @@ UPnP port forwarding
 ---------------------
 
 The use of UPnP for port forwarding behind a NAT router is now the default for 
-Qt builds: More connections overall allow for a faster and more stable zcoin
+Qt builds: More connections overall allow for a faster and more stable zoin
 experience.
 
 To build with UPnP, but have its use disabled by default, pass the
