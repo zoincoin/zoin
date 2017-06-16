@@ -85,7 +85,16 @@ Build configuration options
 UPnP port forwarding
 ---------------------
 
-To use UPnP for port forwarding behind a NAT router (recommended, as more connections overall allow for a faster and more stable zoin experience), pass the following argument to qmake:
+The use of UPnP for port forwarding behind a NAT router is now the default for 
+Qt builds: More connections overall allow for a faster and more stable zoin
+experience.
+
+To build with UPnP, but have its use disabled by default, pass the
+"USE_UPNP=0" argument to qmake:
+
+	qmake "USE_UPNP=0"
+
+To build without UPnP, pass "USE_UPNP=-", instead.
 
 ::
 
@@ -101,9 +110,10 @@ Set USE_UPNP to a different value to control this:
 +------------+--------------------------------------------------------------------------+
 | USE_UPNP=- | no UPnP support, miniupnpc not required;                                 |
 +------------+--------------------------------------------------------------------------+
-| USE_UPNP=0 | (the default) built with UPnP, support turned off by default at runtime; |
+| USE_UPNP=0 | build with UPnP, support turned off by default at runtime;               |
 +------------+--------------------------------------------------------------------------+
 | USE_UPNP=1 | build with UPnP support turned on by default at runtime.                 |
+|(or not set)| (the default)                                                            |
 +------------+--------------------------------------------------------------------------+
 
 Notification support for recent (k)ubuntu versions
@@ -119,14 +129,15 @@ FreeDesktop notification interface through DBUS using the following qmake option
 Generation of QR codes
 -----------------------
 
+The use of libqrencode is now the default.
 libqrencode may be used to generate QRCode images for payment requests.
 It can be downloaded from http://fukuchi.org/works/qrencode/index.html.en, or installed via your package manager. Pass the USE_QRCODE
 flag to qmake to control this:
 
 +--------------+--------------------------------------------------------------------------+
-| USE_QRCODE=0 | (the default) No QRCode support - libarcode not required                 |
+| USE_QRCODE=0 | No QRCode support - libarcode not required                               |
 +--------------+--------------------------------------------------------------------------+
-| USE_QRCODE=1 | QRCode support enabled                                                   |
+| USE_QRCODE=1 | QRCode support enabled (the default)                                     |
 +--------------+--------------------------------------------------------------------------+
 
 
